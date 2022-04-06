@@ -16,7 +16,6 @@ if (!CheckDateFormat(inputDate))
     return;
 }
     
-
 Console.WriteLine("Please indicate how many days before you want me start reminding you.");
 var inputReminder = Console.ReadLine();
 if (!Int32.TryParse(inputReminder, out int reminder))
@@ -42,32 +41,23 @@ if(currentDate >= eventDate)
     return;
 }
 
-var ev = new Event(inputName, eventDate, reminder);
-var remindNow = ev.CatchReminder(currentDate);
-var eventNow = ev.CatchEvent(currentDate);
-
 Console.Clear();
 
-while (!remindNow.IsCompleted)
-{
-    currentDate = currentDate.AddDays(1);
-    Console.WriteLine(currentDate.ToString("mm/dd/yyyy"));
-
-    await Task.Delay(1000);
-    Console.Clear();
-}
-
-while (!eventNow.IsCompleted)
-{
-    currentDate = currentDate.AddDays(1);
-    Console.WriteLine($"Only {ev.Date.Day - currentDate.Day} days to the event!");
-
-    await Task.Delay(1000);
-    Console.Clear();
-}
+var ev = new Event(inputName, eventDate, reminder);
+currentDate = await ev.CatchReminder(currentDate);
+await ev.CatchEvent(currentDate);
 
 Console.Clear();
 Console.WriteLine($"Hey, {ev.Name} is today!!!");
+
+//while (!eventNow.IsCompleted)
+//{
+//    currentDate = currentDate.AddDays(1);
+//    Console.WriteLine($"Only {ev.Date.Day - currentDate.Day} days to the event!");
+
+//    await Task.Delay(1000);
+//    Console.Clear();
+//}
 
 static bool CheckDateFormat(string date)
 {
@@ -103,25 +93,27 @@ class Event
         Reminder = date.AddDays(-reminder);
     }
 
-    public async Task<bool> CatchReminder(DateTime now)
+    public async Task<DateTime> CatchReminder(DateTime now)
     {
-        while(now <= Reminder)
+        while(now < Reminder)
         {
+            Console.WriteLine(now.ToString("MM/dd/yyyy"));
             await Task.Delay(TimeSpan.FromSeconds(1)); //Task.Delay(1000);
             now = now.AddDays(1);
+            Console.Clear();
         }
 
-        return true;
+        return now;
     }
 
-    public async Task<bool> CatchEvent(DateTime now)
+    public async Task CatchEvent(DateTime now)
     {
-        while (now <= Date)
+        while (now < Date)
         {
+            Console.WriteLine($"Only {Date.Day - now.Day} days to the event!");
             await Task.Delay(TimeSpan.FromSeconds(1)); //Task.Delay(1000);
             now = now.AddDays(1);
+            Console.Clear();
         }
-
-        return true;
     }
 }
