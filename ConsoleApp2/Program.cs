@@ -1,36 +1,16 @@
-﻿int[] result = new int[] { 2, 1, 5, 3, 4 };
-GetBribes(result);
+﻿Console.WriteLine("Loading...");
+WaitForIt();
+Console.WriteLine("Loaded");
+await WaitForIt2();
 
-static void GetBribes(int[] result)
+async Task WaitForIt()
 {
-    for(var x = result.Length - 1; x >= 0; x--)
-    {
-        var pos = x + 1;
+    await Task.Delay(TimeSpan.FromSeconds(5));
+    Console.WriteLine("Five seconds complete");
+}
 
-        if (result[x] > pos && pos + 2 < result[x])
-        {
-            Console.WriteLine("Too chaotic");
-            return;
-        }
-    }
-
-    var bribes = 0;
-
-    for (var x = result.Length - 1; x >= 0; x--)
-    {
-        var pos = x + 1;
-
-        if (x > 0 && result[x] <= pos && result[x - 1] >= pos)
-        {
-            var b = result[x];
-            result[x] = result[x - 1];
-            result[x - 1] = b;
-            bribes++;
-
-            if (x + 1 < result.Length)
-                x += 2;
-        }
-    }
-
-    Console.WriteLine(bribes);
+async Task WaitForIt2()
+{
+    await Task.Delay(TimeSpan.FromSeconds(10));
+    Console.WriteLine("Ten seconds complete");
 }
